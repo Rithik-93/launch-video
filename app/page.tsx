@@ -1,65 +1,318 @@
-import Image from "next/image";
+'use client';
+
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function Home() {
+  const [activeModal, setActiveModal] = useState<'waitlist' | 'demo' | null>(null);
+  const [isModalMounted, setIsModalMounted] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const firstInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Shared fields
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  // Demo-only optional field
+  const [referrer, setReferrer] = useState('');
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const resetForm = useCallback(() => {
+    setName('');
+    setEmail('');
+    setReferrer('');
+    setSubmitError(null);
+    setSubmitSuccess(false);
+    setIsSubmitting(false);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsModalVisible(false);
+    window.setTimeout(() => {
+      setIsModalMounted(false);
+      setActiveModal(null);
+    }, 120);
+  }, []);
+
+  const openWaitlistModal = useCallback(() => {
+    resetForm();
+    setActiveModal('waitlist');
+    setIsModalMounted(true);
+    requestAnimationFrame(() => setIsModalVisible(true));
+  }, [resetForm]);
+
+  const openDemoModal = useCallback(() => {
+    resetForm();
+    setActiveModal('demo');
+    setIsModalMounted(true);
+    requestAnimationFrame(() => setIsModalVisible(true));
+  }, [resetForm]);
+
+  useEffect(() => {
+    if (!isModalMounted) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeModal();
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.setTimeout(() => firstInputRef.current?.focus(), 60);
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [closeModal, isModalMounted]);
+
+  const modalTitle =
+    activeModal === 'demo' ? 'Request a private demo' : 'Join the waiting list';
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="relative h-screen w-screen bg-black overflow-hidden">
+      <video
+        src="/launch.mp4"
+        autoPlay
+        loop
+        muted
+        className="w-full h-full object-cover"
+      >
+        Your browser does not support the video tag.
+      </video>
+
+      {/* Gradient vignette */}
+      <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/85 via-black/20 to-transparent" />
+
+      {/* CTA group */}
+      <div
+        className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-4 text-center"
+        style={{ fontFamily: 'var(--font-dm-sans)' }}
+      >
+        <p className="text-[11px] uppercase tracking-[0.2em] text-white/35 font-medium select-none">
+          Early access
+        </p>
+
+        <button
+          onClick={openWaitlistModal}
+          className="px-7 py-3 text-[13px] font-semibold tracking-wide rounded-lg border border-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.7)] hover:bg-white/10 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer"
+          style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#fff' }}
+        >
+          Join the waiting list
+        </button>
+
+        <button
+          type="button"
+          onClick={openDemoModal}
+          className="group cursor-pointer flex flex-col items-center gap-0.5"
+        >
+          <span className="text-[11px] text-white/30 tracking-wide">
+            Have a referral?
+          </span>
+          <span className="inline-flex items-center gap-1 text-[12px] text-white/55 group-hover:text-white/85 transition-colors duration-150">
+            <span className="border-b border-white/18 group-hover:border-white/45 transition-colors duration-150 pb-px">
+              Request a private demo
+            </span>
+            <span
+              className="inline-block transition-transform duration-150 ease-out group-hover:translate-x-0.5"
+              aria-hidden="true"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              &rarr;
+            </span>
+          </span>
+        </button>
+      </div>
+
+      {/* Modal */}
+      {isModalMounted && (
+        <div
+          className={[
+            'fixed inset-0 z-50 flex items-center justify-center p-4',
+            'transition-opacity duration-100 ease-out cursor-pointer',
+            isModalVisible ? 'opacity-100' : 'opacity-0',
+          ].join(' ')}
+          onClick={closeModal}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
+          <div className="absolute inset-0 bg-black/65 backdrop-blur-md" aria-hidden="true" />
+
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={[
+              'relative w-full max-w-sm rounded-2xl border border-white/8',
+              'bg-linear-to-b from-[#0f1117]/98 to-[#0a0c12]/95',
+              'shadow-[0_32px_96px_rgba(0,0,0,0.75)]',
+              'p-5 cursor-default',
+              'transition-all duration-100 ease-out will-change-transform',
+              isModalVisible
+                ? 'translate-y-0 scale-100 opacity-100'
+                : 'translate-y-3 scale-[0.98] opacity-0',
+            ].join(' ')}
+            style={{ fontFamily: 'var(--font-dm-sans)' }}
+          >
+            {/* Close */}
+            <button
+              onClick={closeModal}
+              className="absolute top-3 right-3 inline-flex h-8 w-8 items-center justify-center rounded-full text-white/35 hover:text-white/75 hover:bg-white/8 transition cursor-pointer text-sm"
+              aria-label="Close"
+              type="button"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              &#x2715;
+            </button>
+
+            {/* Header */}
+            <div className="mb-5">
+              <h2
+                id="modal-title"
+                className="text-[15px] font-semibold tracking-tight text-white"
+              >
+                {modalTitle}
+              </h2>
+              <p className="mt-1 text-[11px] text-white/35 tracking-wide">
+                {activeModal === 'demo'
+                  ? 'Referred users get priority review.'
+                  : 'Spots are limited. We select carefully.'}
+              </p>
+            </div>
+
+            <form
+              className="flex flex-col gap-3"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (isSubmitting || !activeModal) return;
+
+                setSubmitError(null);
+                setIsSubmitting(true);
+
+                try {
+                  const res = await fetch('/api/waitlist', {
+                    method: 'POST',
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify({
+                      type: activeModal,
+                      name,
+                      email,
+                      ...(activeModal === 'demo' ? { referrer } : {}),
+                    }),
+                  });
+
+                  const data = (await res.json().catch(() => null)) as
+                    | { ok?: boolean; error?: string }
+                    | null;
+
+                  if (!res.ok || !data?.ok) {
+                    setSubmitError(data?.error ?? 'Something went wrong. Please try again.');
+                    return;
+                  }
+
+                  setSubmitSuccess(true);
+                  window.setTimeout(() => closeModal(), 700);
+                } catch {
+                  setSubmitError('Network error. Please try again.');
+                } finally {
+                  setIsSubmitting(false);
+                }
+              }}
+            >
+              {/* Name */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-semibold text-white/45 uppercase tracking-widest">
+                  Name
+                </label>
+                <input
+                  ref={firstInputRef}
+                  type="text"
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  autoComplete="name"
+                  className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/8 text-[13px] text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/25 transition"
+                />
+              </div>
+
+              {/* Email */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-semibold text-white/45 uppercase tracking-widest">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  className="w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/8 text-[13px] text-white placeholder:text-white/20 focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/25 transition"
+                />
+              </div>
+
+              {/* Referrer — demo only, optional */}
+              {activeModal === 'demo' && (
+                <div className="flex flex-col gap-1.5">
+                  <label className="flex items-center gap-2 text-[11px] font-semibold text-white/45 uppercase tracking-widest">
+                    Referred by
+                    <span className="text-[9px] normal-case tracking-normal font-normal text-white/25 border border-white/12 rounded px-1 py-px">
+                      optional
+                    </span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Name of the person who referred you"
+                    value={referrer}
+                    onChange={(e) => setReferrer(e.target.value)}
+                    autoComplete="off"
+                    className="w-full px-3.5 py-2.5 rounded-lg bg-white/3 border border-white/6 text-[13px] text-white placeholder:text-white/15 focus:outline-none focus:ring-1 focus:ring-white/15 focus:border-white/20 transition"
+                  />
+                </div>
+              )}
+
+              {/* Error */}
+              {submitError && (
+                <p className="text-[11px] text-red-300/75 px-0.5">{submitError}</p>
+              )}
+
+              {/* Success */}
+              {submitSuccess && (
+                <p className="text-[11px] text-white/55 px-0.5 tracking-wide">
+                  {activeModal === 'demo'
+                    ? "Noted. We'll be in touch if it's a fit."
+                    : "You're on the list. We'll reach out selectively."}
+                </p>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={[
+                  'mt-1 w-full py-3 rounded-lg text-[13px] font-semibold tracking-wide border border-white/10 transition-all duration-150',
+                  isSubmitting
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:bg-white/12 active:scale-[0.99] cursor-pointer',
+                ].join(' ')}
+                style={{ backgroundColor: 'rgba(255,255,255,0.07)', color: '#fff' }}
+              >
+                {isSubmitting
+                  ? 'Submitting...'
+                  : activeModal === 'demo'
+                    ? 'Request private demo'
+                    : 'Request access'}
+              </button>
+
+              <p className="text-center text-[10px] text-white/22 tracking-wide">
+                {activeModal === 'demo'
+                  ? "We'll be in touch if it's a fit."
+                  : "We'll reach out selectively."}
+              </p>
+            </form>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      )}
     </div>
   );
 }

@@ -143,16 +143,19 @@ export default function Home() {
           <div
             onClick={(e) => e.stopPropagation()}
             className={[
-              'relative w-full max-w-sm rounded-2xl border border-white/8',
-              'bg-linear-to-b from-[#0f1117]/98 to-[#0a0c12]/95',
-              'shadow-[0_32px_96px_rgba(0,0,0,0.75)]',
+              'relative w-full max-w-sm rounded-2xl',
+              'border border-white/10',
+              'shadow-[0_32px_96px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(50, 43, 43, 0.09)]',
               'p-5 cursor-default',
               'transition-all duration-100 ease-out will-change-transform',
               isModalVisible
                 ? 'translate-y-0 scale-100 opacity-100'
                 : 'translate-y-3 scale-[0.98] opacity-0',
             ].join(' ')}
-            style={{ fontFamily: 'var(--font-dm-sans)' }}
+            style={{
+              fontFamily: 'var(--font-dm-sans)',
+              background: 'linear-gradient(160deg, #151f38 0%, #0c0e18 60%)',
+            }}
           >
             {/* Close */}
             <button
@@ -179,6 +182,23 @@ export default function Home() {
               </p>
             </div>
 
+            {submitSuccess ? (
+              <div className="flex flex-col items-center gap-3 py-4 text-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/8 text-white text-lg">
+                  ✓
+                </div>
+                <div>
+                  <p className="text-[15px] font-semibold text-white tracking-tight">
+                    {activeModal === 'demo' ? "Request received" : "You're on the list"}
+                  </p>
+                  <p className="mt-1.5 text-[12px] text-white/45 leading-relaxed">
+                    {activeModal === 'demo'
+                      ? "We'll be in touch if it's a fit."
+                      : "We'll reach out selectively."}
+                  </p>
+                </div>
+              </div>
+            ) : (
             <form
               className="flex flex-col gap-3"
               onSubmit={async (e) => {
@@ -210,7 +230,7 @@ export default function Home() {
                   }
 
                   setSubmitSuccess(true);
-                  window.setTimeout(() => closeModal(), 700);
+                  window.setTimeout(() => closeModal(), 2200);
                 } catch {
                   setSubmitError('Network error. Please try again.');
                 } finally {
@@ -276,15 +296,6 @@ export default function Home() {
                 <p className="text-[11px] text-red-300/75 px-0.5">{submitError}</p>
               )}
 
-              {/* Success */}
-              {submitSuccess && (
-                <p className="text-[11px] text-white/55 px-0.5 tracking-wide">
-                  {activeModal === 'demo'
-                    ? "Noted. We'll be in touch if it's a fit."
-                    : "You're on the list. We'll reach out selectively."}
-                </p>
-              )}
-
               {/* Submit */}
               <button
                 type="submit"
@@ -297,19 +308,14 @@ export default function Home() {
                 ].join(' ')}
                 style={{ backgroundColor: 'rgba(255,255,255,0.07)', color: '#fff' }}
               >
-                {isSubmitting
-                  ? 'Submitting...'
-                  : activeModal === 'demo'
-                    ? 'Request private demo'
-                    : 'Request access'}
+                {isSubmitting ? 'Submitting...' : activeModal === 'demo' ? 'Request private demo' : 'Request access'}
               </button>
 
               <p className="text-center text-[10px] text-white/22 tracking-wide">
-                {activeModal === 'demo'
-                  ? "We'll be in touch if it's a fit."
-                  : "We'll reach out selectively."}
+                {activeModal === 'demo' ? "We'll be in touch if it's a fit." : "We'll reach out selectively."}
               </p>
             </form>
+            )}
           </div>
         </div>
       )}

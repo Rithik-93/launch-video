@@ -19,6 +19,9 @@ export default function Home() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
+  const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const isFormReady = name.trim().length >= 2 && isValidEmail(email.trim());
+
   const resetForm = useCallback(() => {
     setName('');
     setEmail('');
@@ -74,7 +77,7 @@ export default function Home() {
   return (
     <div className="relative h-screen w-screen bg-black overflow-hidden">
       <video
-        src="/launch.mp4"
+        src="/launch1.mp4"
         autoPlay
         loop
         muted
@@ -97,8 +100,7 @@ export default function Home() {
 
         <button
           onClick={openWaitlistModal}
-          className="px-7 py-3 text-[13px] font-semibold tracking-wide rounded-lg border border-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.7)] hover:bg-white/10 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer"
-          style={{ backgroundColor: 'rgba(255,255,255,0.06)', color: '#fff' }}
+          className="px-7 py-3 text-[13px] font-semibold tracking-wide rounded-lg border border-white/10 bg-white/6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.7)] hover:bg-white/15 hover:border-white/20 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer text-white"
         >
           Join the waiting list
         </button>
@@ -299,14 +301,15 @@ export default function Home() {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isFormReady}
                 className={[
-                  'mt-1 w-full py-3 rounded-lg text-[13px] font-semibold tracking-wide border border-white/10 transition-all duration-150',
+                  'mt-1 w-full py-3 rounded-lg text-[13px] font-semibold tracking-wide border transition-all duration-200',
                   isSubmitting
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:bg-white/12 active:scale-[0.99] cursor-pointer',
+                    ? 'opacity-50 cursor-not-allowed bg-white/7 border-white/10 text-white'
+                    : isFormReady
+                      ? 'bg-white/90 border-white/80 text-black hover:bg-white active:scale-[0.99] cursor-pointer shadow-[0_0_24px_rgba(255,255,255,0.12)]'
+                      : 'bg-white/6 border-white/8 text-white/30 cursor-not-allowed',
                 ].join(' ')}
-                style={{ backgroundColor: 'rgba(255,255,255,0.07)', color: '#fff' }}
               >
                 {isSubmitting ? 'Submitting...' : activeModal === 'demo' ? 'Request private demo' : 'Request access'}
               </button>

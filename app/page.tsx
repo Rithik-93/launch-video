@@ -20,7 +20,7 @@ export default function Home() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  const isFormReady = name.trim().length >= 2 && isValidEmail(email.trim());
+  const isFormReady = name.trim().length >= 2 && isValidEmail(email.trim()) && (activeModal !== 'demo' || referrer.trim().length >= 2);
 
   const resetForm = useCallback(() => {
     setName('');
@@ -87,14 +87,14 @@ export default function Home() {
       </video>
 
       {/* Gradient vignette */}
-      <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/85 via-black/20 to-transparent" />
+      <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/65 via-black/10 to-transparent" />
 
       {/* CTA group */}
       <div
         className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-4 text-center"
         style={{ fontFamily: 'var(--font-dm-sans)' }}
       >
-        <p className="text-[11px] uppercase tracking-[0.2em] text-white/35 font-medium select-none">
+        <p className="text-[11px] uppercase tracking-[0.2em] text-white/65 font-medium select-none">
           Early access
         </p>
 
@@ -110,7 +110,7 @@ export default function Home() {
           onClick={openDemoModal}
           className="group cursor-pointer flex flex-col items-center gap-0.5"
         >
-          <span className="text-[11px] text-white/30 tracking-wide">
+          <span className="text-[11px] text-white/45 tracking-wide">
             Have a referral?
           </span>
           <span className="inline-flex items-center gap-1 text-[12px] text-white/55 group-hover:text-white/85 transition-colors duration-150">
@@ -170,18 +170,18 @@ export default function Home() {
             </button>
 
             {/* Header */}
-            <div className="mb-5">
+            <div className="mb-4">
               <h2
                 id="modal-title"
                 className="text-[15px] font-semibold tracking-tight text-white"
               >
                 {modalTitle}
               </h2>
-              <p className="mt-1 text-[11px] text-white/35 tracking-wide">
-                {activeModal === 'demo'
-                  ? 'Referred users get priority review.'
-                  : 'Spots are limited. We select carefully.'}
-              </p>
+              {activeModal !== 'demo' && (
+                <p className="mt-1 text-[11px] text-white/35 tracking-wide">
+                  Spots are limited. We select carefully.
+                </p>
+              )}
             </div>
 
             {submitSuccess ? (
@@ -258,7 +258,7 @@ export default function Home() {
               </div>
 
               {/* Email */}
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1.5 pb-5">
                 <label className="text-[11px] font-semibold text-white/45 uppercase tracking-widest">
                   Email
                 </label>
@@ -275,12 +275,10 @@ export default function Home() {
 
               {/* Referrer — demo only, optional */}
               {activeModal === 'demo' && (
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1 pb-5">
                   <label className="flex items-center gap-2 text-[11px] font-semibold text-white/45 uppercase tracking-widest">
                     Referred by
-                    <span className="text-[9px] normal-case tracking-normal font-normal text-white/25 border border-white/12 rounded px-1 py-px">
-                      optional
-                    </span>
+                    
                   </label>
                   <input
                     type="text"
@@ -303,7 +301,7 @@ export default function Home() {
                 type="submit"
                 disabled={isSubmitting || !isFormReady}
                 className={[
-                  'mt-1 w-full py-3 rounded-lg text-[13px] font-semibold tracking-wide border transition-all duration-200',
+                  ' mx-auto py-3 px-10   rounded-lg text-[13px] font-semibold tracking-wide border transition-all duration-200',
                   isSubmitting
                     ? 'opacity-50 cursor-not-allowed bg-white/7 border-white/10 text-white'
                     : isFormReady
@@ -314,9 +312,9 @@ export default function Home() {
                 {isSubmitting ? 'Submitting...' : activeModal === 'demo' ? 'Request private demo' : 'Request access'}
               </button>
 
-              <p className="text-center text-[10px] text-white/22 tracking-wide">
+              {/* <p className="text-center text-[10px] text-white/22 tracking-wide">
                 {activeModal === 'demo' ? "We'll be in touch if it's a fit." : "We'll reach out selectively."}
-              </p>
+              </p> */}
             </form>
             )}
           </div>

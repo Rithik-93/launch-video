@@ -72,7 +72,7 @@ export default function Home() {
   }, [closeModal, isModalMounted]);
 
   const modalTitle =
-    activeModal === 'demo' ? 'Request a private demo' : 'Join the waiting list';
+    activeModal === 'demo' ? 'Request a demo' : 'Join the waiting list';
 
   return (
     <div className="relative h-screen w-screen bg-black overflow-hidden">
@@ -91,40 +91,37 @@ export default function Home() {
 
       {/* CTA group */}
       <div
-        className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-4 text-center"
+        className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 flex items-end gap-8 text-center"
         style={{ fontFamily: 'var(--font-dm-sans)' }}
       >
-        <p className="text-[11px] uppercase tracking-[0.2em] text-white/65 font-medium select-none">
-          Early access
-        </p>
+        {/* Early Access Section */}
+        <div className="flex flex-col items-center gap-2.5">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-white/65 font-medium select-none">
+            Early access
+          </p>
+          <button
+            onClick={openWaitlistModal}
+            className="px-5 py-2 text-[12px] font-semibold tracking-wide rounded-lg border border-white/10 bg-white/6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.7)] hover:bg-white/15 hover:border-white/20 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer text-white"
+          >
+            Join the waiting list
+          </button>
+        </div>
 
-        <button
-          onClick={openWaitlistModal}
-          className="px-7 py-3 text-[13px] font-semibold tracking-wide rounded-lg border border-white/10 bg-white/6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.7)] hover:bg-white/15 hover:border-white/20 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer text-white"
-        >
-          Join the waiting list
-        </button>
+        {/* Vertical divider */}
+        <div className="self-stretch w-px mx-1 rounded-full" style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.08) 8%, rgba(255,255,255,0.08) 88%, transparent)' }} aria-hidden="true" />
 
-        <button
-          type="button"
-          onClick={openDemoModal}
-          className="group cursor-pointer flex flex-col items-center gap-0.5"
-        >
-          <span className="text-[11px] text-white/45 tracking-wide">
+        {/* Referral Section */}
+        <div className="flex flex-col items-center gap-2.5">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-white/65 font-medium select-none">
             Have a referral?
-          </span>
-          <span className="inline-flex items-center gap-1 text-[12px] text-white/55 group-hover:text-white/85 transition-colors duration-150">
-            <span className="border-b border-white/18 group-hover:border-white/45 transition-colors duration-150 pb-px">
-              Request a private demo
-            </span>
-            <span
-              className="inline-block transition-transform duration-150 ease-out group-hover:translate-x-0.5"
-              aria-hidden="true"
-            >
-              &rarr;
-            </span>
-          </span>
-        </button>
+          </p>
+          <button
+            onClick={openDemoModal}
+            className="px-5 py-2 text-[12px] font-semibold tracking-wide rounded-lg border border-white/10 bg-white/6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.7)] hover:bg-white/15 hover:border-white/20 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer text-white"
+          >
+            Request a demo
+          </button>
+        </div>
       </div>
 
       {/* Modal */}

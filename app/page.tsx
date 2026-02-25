@@ -8,6 +8,8 @@ export default function Home() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const firstInputRef = useRef<HTMLInputElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const progressBarRef = useRef<HTMLDivElement | null>(null);
 
   // Shared fields
   const [name, setName] = useState('');
@@ -71,12 +73,46 @@ export default function Home() {
     };
   }, [closeModal, isModalMounted]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    const progressBar = progressBarRef.current;
+    if (!video || !progressBar) return;
+
+    let rafId: number;
+
+    const updateProgress = () => {
+      if (video.duration && isFinite(video.duration) && video.duration > 0) {
+        const progress = (video.currentTime / video.duration) * 100;
+        progressBar.style.width = `${progress}%`;
+      }
+      rafId = requestAnimationFrame(updateProgress);
+    };
+
+    const handleCanPlay = () => {
+      rafId = requestAnimationFrame(updateProgress);
+    };
+
+    video.addEventListener('loadedmetadata', handleCanPlay);
+    video.addEventListener('canplay', handleCanPlay);
+
+    if (video.readyState >= 2) {
+      handleCanPlay();
+    }
+
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      video.removeEventListener('loadedmetadata', handleCanPlay);
+      video.removeEventListener('canplay', handleCanPlay);
+    };
+  }, []);
+
   const modalTitle =
     activeModal === 'demo' ? 'Request a demo' : 'Join the waiting list';
 
   return (
     <div className="relative h-screen w-screen bg-black overflow-hidden">
       <video
+        ref={videoRef}
         src="/launch1.mp4"
         autoPlay
         loop
@@ -317,6 +353,15 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* Video progress bar */}
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-white/8 z-20">
+        <div
+          ref={progressBarRef}
+          className="h-full bg-white/40"
+          style={{ width: '0%' }}
+        />
+      </div>
     </div>
   );
 }

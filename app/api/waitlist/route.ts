@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import axios from "axios";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -10,15 +11,13 @@ function asTrimmedString(v: unknown): string | null {
   return s.length ? s : null;
 }
 
-export async function POST(req: NextRequest) {
-  const webhookUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL;
-  if (!webhookUrl) {
-    return NextResponse.json(
-      { ok: false, error: "Server is missing GOOGLE_SHEETS_WEBAPP_URL" },
-      { status: 500 }
-    );
-  }
+const GOOGLE_SHEETS_WEBAPP_URL = process.env.GOOGLE_SHEETS_WEBAPP_URL;
 
+if (!GOOGLE_SHEETS_WEBAPP_URL) {
+  throw new Error("GOOGLE_SHEETS_WEBAPP_URL is not set");
+}
+
+export async function POST(req: NextRequest) {
   let body: unknown;
   try {
     body = await req.json();
@@ -55,57 +54,45 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // referrer is optional — only present on demo submissions
   const referrer = type === "demo" ? (asTrimmedString(b.referrer) ?? "") : "";
 
-  const payload = {
-    type,
-    name,
-    email: email.toLowerCase(),
-    ...(type === "demo" ? { referrer } : {}),
-    createdAt: new Date().toISOString(),
-    source: "launch-site",
-    ...(process.env.WAITLIST_WEBHOOK_SECRET
-      ? { secret: process.env.WAITLIST_WEBHOOK_SECRET }
-      : {}),
-  };
+  // Demo requests: send exactly like test.ts (type, name, email, referrer, createdAt, source)
+  const payload =
+    type === "demo"
+      ? {
+          type: "demo",
+          name,
+          email: email.toLowerCase(),
+          referrer,
+          createdAt: new Date().toISOString(),
+          source: "launch-site"
+        }
+      : {
+          type: "waitlist",
+          name,
+          email: email.toLowerCase(),
+          createdAt: new Date().toISOString(),
+          source: "launch-site"
+        };
 
   try {
-    const res = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(payload),
-      cache: "no-store",
+    const res = await axios.post(GOOGLE_SHEETS_WEBAPP_URL as string, payload, {
+      headers: { "Content-Type": "application/json" },
+      maxBodyLength: Infinity,
     });
 
-    const text = await res.text().catch(() => "");
-
-    if (!res.ok) {
+    if (res.status !== 200 || res.data?.ok !== true) {
       return NextResponse.json(
-        { ok: false, error: "Failed to write to Google Sheets.", details: text.slice(0, 500) },
-        { status: 502 }
-      );
-    }
-
-    try {
-      const parsed = JSON.parse(text) as { ok?: boolean; error?: string };
-      if (parsed?.ok !== true) {
-        return NextResponse.json(
-          { ok: false, error: parsed?.error ?? "Google Sheets webhook returned an error.", details: text.slice(0, 500) },
-          { status: 502 }
-        );
-      }
-    } catch {
-      return NextResponse.json(
-        { ok: false, error: "Google Sheets webhook returned an unexpected response.", details: text.slice(0, 500) },
+        { ok: false, error: "Failed to write to Google Sheets.", details: JSON.stringify(res.data)?.slice(0, 500) },
         { status: 502 }
       );
     }
 
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (error: unknown) {
+    const details = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { ok: false, error: "Network error writing to Google Sheets." },
+      { ok: false, error: "Failed to write to Google Sheets.", details },
       { status: 502 }
     );
   }

@@ -355,7 +355,7 @@ export default function Home() {
       )}
 
       {/* Video progress bar */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-white/8 z-20">
+      <div className="absolute bottom-0 left-0 w-full h-[3px] bg-white/8 z-20">
         <div
           ref={progressBarRef}
           className="h-full bg-white/40"

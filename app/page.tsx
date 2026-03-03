@@ -110,7 +110,7 @@ export default function Home() {
     activeModal === 'demo' ? 'Request a demo' : 'Join the waiting list';
 
   return (
-    <div className="relative h-screen w-screen bg-black overflow-hidden">
+    <div className="relative h-[100dvh] w-full bg-black overflow-hidden">
       <video
         ref={videoRef}
         src="/launch1.mp4"

@@ -75,6 +75,28 @@ export default function Home() {
 
   useEffect(() => {
     const video = videoRef.current;
+    if (!video) return;
+
+    // Fallback for Chrome iOS: only call play() if the video didn't auto-start.
+    // Waiting a tick lets the native autoplay attribute fire first.
+    const timer = window.setTimeout(() => {
+      if (video.paused) {
+        video.play().catch(() => {
+          // If still blocked, retry on first user touch
+          const onInteraction = () => {
+            video.play().catch(() => {});
+          };
+          document.addEventListener('touchstart', onInteraction, { once: true });
+          document.addEventListener('click', onInteraction, { once: true });
+        });
+      }
+    }, 300);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
     const progressBar = progressBarRef.current;
     if (!video || !progressBar) return;
 

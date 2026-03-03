@@ -117,7 +117,7 @@ export default function Home() {
         autoPlay
         loop
         muted
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain sm:object-cover"
       >
         Your browser does not support the video tag.
       </video>
@@ -127,33 +127,37 @@ export default function Home() {
 
       {/* CTA group */}
       <div
-        className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 flex items-end gap-8 text-center"
+        className="absolute bottom-24 sm:bottom-14 left-1/2 -translate-x-1/2 z-10 flex flex-row items-end gap-5 sm:gap-8 text-center"
         style={{ fontFamily: 'var(--font-dm-sans)' }}
       >
         {/* Early Access Section */}
-        <div className="flex flex-col items-center gap-2.5">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/65 font-medium select-none">
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white/65 font-medium select-none">
             Early access
           </p>
           <button
             onClick={openWaitlistModal}
-            className="px-5 py-2 text-[12px] font-semibold tracking-wide rounded-lg border border-white/10 bg-white/6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.7)] hover:bg-white/15 hover:border-white/20 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer text-white"
+            className="px-4 sm:px-5 py-2 text-[11px] sm:text-[12px] font-semibold tracking-wide rounded-lg border border-white/10 bg-white/6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.7)] hover:bg-white/15 hover:border-white/20 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer text-white whitespace-nowrap"
           >
             Join the waiting list
           </button>
         </div>
 
         {/* Vertical divider */}
-        <div className="self-stretch w-px mx-1 rounded-full" style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.08) 8%, rgba(255,255,255,0.08) 88%, transparent)' }} aria-hidden="true" />
+        <div
+          className="self-stretch w-px mx-1 rounded-full"
+          style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.08) 8%, rgba(255,255,255,0.08) 88%, transparent)' }}
+          aria-hidden="true"
+        />
 
         {/* Referral Section */}
-        <div className="flex flex-col items-center gap-2.5">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/65 font-medium select-none">
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white/65 font-medium select-none">
             Have a referral?
           </p>
           <button
             onClick={openDemoModal}
-            className="px-5 py-2 text-[12px] font-semibold tracking-wide rounded-lg border border-white/10 bg-white/6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.7)] hover:bg-white/15 hover:border-white/20 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer text-white"
+            className="px-4 sm:px-5 py-2 text-[11px] sm:text-[12px] font-semibold tracking-wide rounded-lg border border-white/10 bg-white/6 shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_20px_60px_rgba(0,0,0,0.7)] hover:bg-white/15 hover:border-white/20 active:scale-[0.98] transition-all duration-150 ease-out cursor-pointer text-white whitespace-nowrap"
           >
             Request a demo
           </button>

@@ -117,6 +117,7 @@ export default function Home() {
         autoPlay
         loop
         muted
+        playsInline
         className="w-full h-full object-contain sm:object-cover"
       >
         Your browser does not support the video tag.

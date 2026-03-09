@@ -132,9 +132,9 @@ export default function Home() {
     activeModal === 'demo' ? 'Request a demo' : 'Join the waiting list';
 
   return (
-    <div className="relative h-[100dvh] w-full bg-black overflow-hidden">
+    <div className="relative h-[100dvh] w-full bg-black overflow-hidden flex flex-col sm:block">
       {/* Video Container */}
-      <div className="relative w-full h-[45dvh] sm:h-full pt-12 sm:pt-0">
+      <div className="relative w-full h-auto sm:h-full pt-12 sm:pt-0 shrink-0">
         <video
           ref={videoRef}
           src="/launch1.mp4"
@@ -142,7 +142,7 @@ export default function Home() {
           loop
           muted
           playsInline
-          className="w-full h-full object-contain sm:object-cover sm:object-center"
+          className="w-full h-auto object-contain sm:h-full sm:object-cover sm:object-center"
         >
           Your browser does not support the video tag.
         </video>
@@ -161,7 +161,7 @@ export default function Home() {
       <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/65 via-black/10 to-transparent" />
 
       {/* Content Overlay */}
-      <div className="absolute top-[45dvh] mt-[44px] sm:mt-0 sm:top-auto sm:bottom-14 left-0 w-full px-6 sm:px-0 sm:left-1/2 sm:-translate-x-1/2 z-10 flex flex-col gap-8 sm:gap-0 sm:items-center">
+      <div className="relative sm:absolute mt-12 sm:mt-0 sm:bottom-14 left-0 w-full px-6 sm:px-0 sm:left-1/2 sm:-translate-x-1/2 z-10 flex flex-col gap-8 sm:gap-0 sm:items-center">
         
         {/* Mobile Info Text */}
         <div className="flex flex-col sm:hidden" style={{ fontFamily: 'var(--font-space-grotesk)' }}>

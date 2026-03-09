@@ -140,7 +140,7 @@ export default function Home() {
         loop
         muted
         playsInline
-        className="w-full h-full object-contain sm:object-cover"
+        className="w-full h-full object-contain object-top sm:object-cover sm:object-center pt-18 sm:pt-0"
       >
         Your browser does not support the video tag.
       </video>
@@ -148,11 +148,28 @@ export default function Home() {
       {/* Gradient vignette */}
       <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/65 via-black/10 to-transparent" />
 
-      {/* CTA group */}
-      <div
-        className="absolute bottom-24 sm:bottom-14 left-1/2 -translate-x-1/2 z-10 flex flex-row items-end gap-5 sm:gap-8 text-center"
-        style={{ fontFamily: 'var(--font-dm-sans)' }}
-      >
+      {/* Content Overlay */}
+      <div className="absolute bottom-10 sm:bottom-14 left-0 w-full px-6 sm:px-0 sm:left-1/2 sm:-translate-x-1/2 z-10 flex flex-col gap-10 sm:gap-0 sm:items-center">
+        
+        {/* Mobile Info Text */}
+        <div className="flex flex-col sm:hidden" style={{ fontFamily: 'var(--font-space-grotesk)' }}>
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-[24px] font-medium text-white leading-none tracking-tight">Friday</h1>
+            <span className="text-[12px] text-white/50 font-normal">by Numerize.ai</span>
+          </div>
+          
+          <div className="h-px w-full bg-white/10 my-6" />
+          
+          <p className="text-[14px] leading-[20px] text-white/60 font-normal max-w-[376px]">
+            Friday is an AI-powered Command Center for F&B businesses, designed to provide real-time visibility and control across sales, costs, and operations. It sits above existing systems and acts as a single operating layer, helping teams identify issues early and make better day-to-day decisions.
+          </p>
+        </div>
+
+        {/* CTA group */}
+        <div
+          className="flex flex-row items-end justify-center gap-5 sm:gap-8 text-center"
+          style={{ fontFamily: 'var(--font-dm-sans)' }}
+        >
         {/* Early Access Section */}
         <div className="flex flex-col items-center gap-2">
           <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white/65 font-medium select-none">
@@ -185,6 +202,7 @@ export default function Home() {
             Request a demo
           </button>
         </div>
+      </div>
       </div>
 
       {/* Modal */}

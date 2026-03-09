@@ -161,7 +161,7 @@ export default function Home() {
       <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/65 via-black/10 to-transparent" />
 
       {/* Content Overlay */}
-      <div className="absolute bottom-auto top-[47dvh] sm:top-auto sm:bottom-14 left-0 w-full px-6 sm:px-0 sm:left-1/2 sm:-translate-x-1/2 z-10 flex flex-col gap-8 sm:gap-0 sm:items-center">
+      <div className="absolute bottom-auto top-[55dvh] sm:top-auto sm:bottom-14 left-0 w-full px-6 sm:px-0 sm:left-1/2 sm:-translate-x-1/2 z-10 flex flex-col gap-8 sm:gap-0 sm:items-center">
         
         {/* Mobile Info Text */}
         <div className="flex flex-col sm:hidden" style={{ fontFamily: 'var(--font-space-grotesk)' }}>

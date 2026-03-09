@@ -133,17 +133,29 @@ export default function Home() {
 
   return (
     <div className="relative h-[100dvh] w-full bg-black overflow-hidden">
-      <video
-        ref={videoRef}
-        src="/launch1.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="w-full h-full object-contain object-top sm:object-cover sm:object-center pt-26 sm:pt-0"
-      >
-        Your browser does not support the video tag.
-      </video>
+      {/* Video Container */}
+      <div className="relative w-full h-[45dvh] sm:h-full pt-26 sm:pt-0">
+        <video
+          ref={videoRef}
+          src="/launch1.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-contain sm:object-cover sm:object-center"
+        >
+          Your browser does not support the video tag.
+        </video>
+        
+        {/* Video progress bar */}
+        <div className="absolute bottom-0 left-0 w-full h-[1.5px] bg-white/8 z-20">
+          <div
+            ref={progressBarRef}
+            className="h-full bg-white/40"
+            style={{ width: '0%' }}
+          />
+        </div>
+      </div>
 
       {/* Gradient vignette */}
       <div className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/65 via-black/10 to-transparent" />
@@ -398,15 +410,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {/* Video progress bar */}
-      <div className="absolute top-[38dvh] bottom-auto sm:top-auto sm:bottom-0 left-0 w-full h-[1.5px] bg-white/8 z-20">
-        <div
-          ref={progressBarRef}
-          className="h-full bg-white/40"
-          style={{ width: '0%' }}
-        />
-      </div>
     </div>
   );
 }

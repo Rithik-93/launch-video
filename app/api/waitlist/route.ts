@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import axios from "axios";
+import { sendLeadNotification } from "@/lib/gmail-send";
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -87,6 +88,13 @@ export async function POST(req: NextRequest) {
         { status: 502 }
       );
     }
+
+    await sendLeadNotification({
+      type,
+      name,
+      email: email.toLowerCase(),
+      ...(type === "demo" && referrer ? { referrer } : {}),
+    });
 
     return NextResponse.json({ ok: true });
   } catch (error: unknown) {
